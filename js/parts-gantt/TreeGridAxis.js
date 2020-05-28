@@ -385,6 +385,14 @@ var TreeGridAxis;
                     });
                 }
             });
+            // If staticScale is not defined on the yAxis, set it to transA
+            // on the first collapse. Ensures that collapsing works when chart
+            // height is specified (#12012)
+            addEvent(axis, 'afterBreaks', function () {
+                if (axis.coll === 'yAxis' && !axis.staticScale && userOptions.height) {
+                    axis.staticScale = axis.options.staticScale = axis.transA;
+                }
+            });
             userOptions = merge({
                 // Default options
                 grid: {
