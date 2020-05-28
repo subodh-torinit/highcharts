@@ -644,7 +644,7 @@ namespace TreeGridAxis {
             // on the first collapse. Ensures that collapsing works when chart
             // height is specified (#12012)
             addEvent(axis, 'afterBreaks', function (): void {
-                if (axis.coll === 'yAxis' && !axis.staticScale && userOptions.height) {
+                if (axis.coll === 'yAxis' && !axis.staticScale && axis.chart.userOptions.chart?.height) {
                     axis.staticScale = axis.options.staticScale = axis.transA;
                 }
             });
