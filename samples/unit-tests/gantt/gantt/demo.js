@@ -390,4 +390,97 @@
 
         assert.ok(true, "Gantt should be initialized with no errors (#13246).");
     });
+
+    QUnit.test('Set chart height and collapse', function (assert) {
+        var today = new Date(),
+            day = 1000 * 60 * 60 * 24;
+
+        // Set to 00:00:00:000 today
+        today.setUTCHours(0);
+        today.setUTCMinutes(0);
+        today.setUTCSeconds(0);
+        today.setUTCMilliseconds(0);
+
+        const chart = Highcharts.ganttChart('container', {
+            chart: {
+                height: 300
+            },
+            xAxis: {
+                min: today.getTime() - (2 * day),
+                max: today.getTime() + (32 * day)
+            },
+            series: [{
+                name: 'Project 1',
+                data: [{
+                    name: 'Planning',
+                    id: 'planning',
+                    start: today.getTime(),
+                    end: today.getTime() + (20 * day)
+                }, {
+                    name: 'Requirements',
+                    id: 'requirements',
+                    parent: 'planning',
+                    start: today.getTime(),
+                    end: today.getTime() + (5 * day)
+                }, {
+                    name: 'Design',
+                    id: 'design',
+                    dependency: 'requirements',
+                    parent: 'planning',
+                    start: today.getTime() + (3 * day),
+                    end: today.getTime() + (20 * day)
+                }, {
+                    name: 'Layout',
+                    id: 'layout',
+                    parent: 'design',
+                    start: today.getTime() + (3 * day),
+                    end: today.getTime() + (10 * day)
+                }, {
+                    name: 'Graphics',
+                    parent: 'design',
+                    dependency: 'layout',
+                    start: today.getTime() + (10 * day),
+                    end: today.getTime() + (20 * day)
+                }, {
+                    name: 'Develop',
+                    id: 'develop',
+                    start: today.getTime() + (5 * day),
+                    end: today.getTime() + (30 * day)
+                }, {
+                    name: 'Create unit tests',
+                    id: 'unit_tests',
+                    dependency: 'requirements',
+                    parent: 'develop',
+                    start: today.getTime() + (5 * day),
+                    end: today.getTime() + (8 * day)
+                }, {
+                    name: 'Implement',
+                    id: 'implement',
+                    dependency: 'unit_tests',
+                    parent: 'develop',
+                    start: today.getTime() + (8 * day),
+                    end: today.getTime() + (30 * day)
+                }]
+            }]
+        });
+
+        click(chart.yAxis[0].ticks['2'].label.element);
+        click(chart.yAxis[0].ticks['0'].label.element);
+
+        assert.strictEqual(
+            chart.yAxis[0].staticScale,
+            chart.yAxis[0].transA,
+            'Axis should have a staticScale equaling axis.transA when chart.height is set'
+        );
+
+        click(chart.yAxis[0].ticks['0'].label.element);
+        click(chart.yAxis[0].ticks['2'].label.element);
+
+        assert.strictEqual(
+            chart.chartHeight,
+            chart.userOptions.chart.height,
+            'Chart should have height specified in options when all points are uncollapsed'
+        );
+
+    });
 }());
