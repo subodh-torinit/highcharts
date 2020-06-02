@@ -30,7 +30,7 @@ chart: {
 ```js
 series: [{
     minPointSize: 100,
-    innerSize: '20%',
+    innerSize: '30%',
     data: [{
         y: 505370,
         z: 1
